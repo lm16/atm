@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户</title>
+
+    <style>
+
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>用户名</th>
+            <th>类型</th>
+            <th>密码</th>
+        </tr>
+    </table>
+    <div id="main">
+        <h1>个人中心</h1>
+        <h2>${用户}</h2>
+        <p>您的附属信息为${身份证号}，${手机号}</p>
+
+        <ul>
+            <li><a href="">注销帐号</a></li>
+            <li><a href="">修改密码</a></li>
+            <li><a href=""></a></li>
+            <li><a href=""></a></li>
+        </ul>
+
+        <h2>您当前所使用的银行卡号为：${卡号}</h2>
+        <p>您当前拥有银行卡情况如下</p>
+        <table border>
+            <tr>
+                <th>银行卡号</th>
+            </tr>
+            <tr>
+                <td>3456789</td>
+            </tr>
+            <tr>
+                <td>6423819417</td>
+            </tr>
+        </table>
+        <p>共计${银行卡号.cnt}张</p>
+        <ul>
+            <li><a href="">注销卡号</a></li>
+            <li><a href="">更改支付密码</a></li>
+            <li><a href="">新办银行卡</a></li>
+            <li><a href=""></a></li>
+        </ul>
+
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        var nav = [
+            {
+                "name":"a",
+                "type":"b",
+                "password":"c"
+            },
+            {
+                "name":"d",
+                "type":"e",
+                "password":"f"
+            }
+        ];
+
+        window.onload = function(){
+            var table = document.getElementsByTagName('table')[0];
+            for(var i=0; i<nav.length; i++){
+                var tr = table.insertRow(table.rows.length);
+                var obj = nav[i];
+                for(var p in obj){
+                    // if(p == 'password'){
+                    //     break;
+                    // }
+                    var td = tr.insertCell(tr.cells.length);
+                    td.innerText = obj[p];
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
