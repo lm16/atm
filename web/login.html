@@ -5,58 +5,59 @@
     <title>Title</title>
 
     <style>
-        div{
-            margin-top:10px;
+        ul li{
+            list-style:none;
+            float: left;
+            margin: 15px 20px;
+            width: 230px;
         }
     </style>
 </head>
 <body>
-<div id="main">
-    <form>
-        <fieldset>
-            <legend>欢迎访问</legend>
-            <div>
-                <label>卡号</label>
-                <input type="text" id="card">
-            </div>
-            <div>
-                <button id="validate">验证</button>
-            </div>
-        </fieldset>
-    </form>
-</div>
-<div id="sub">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <div id="part1">
+                    <p>欢迎登录</p>
+                    请输入手机号：<input type="text" id="phone"><br>
+                    请输入登录密码：<input type="password" id="passwd">
+                    <button id="b_account">确定</button>
+                </div>
+            </li>
+            <li>
+                <div id="part2">
+                    <p>登录成功</p>
+                    <p>请选择卡号</p>
+                    <form action="/jump.do" method="post">
+                        <select name="cardId"></select>
+                        <button type="submit">跳转</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
 
-</div>
+    <script src="js/jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('#b_account').on('click', function(){
+                $.ajax({
+                    url: "/login.do",
+                    type: "POST",
 
-<script src="js/jquery.min.js"></script>
-<script>
-    $(function(){
-        $('#validate').click(function(){
-            return post();
-        });
-    });
+                    contentType : "application/json;charset=UTF-8",
+                    data: JSON.stringify({"phone":$('#phone').val().trim(), "passwd":$('#passwd').val().trim()}),
 
-    function post(){
-        $.ajax({
-            url: "/validate.do",
-            type: "POST",
-
-            data: JSON.stringify({"bankCard":$('#card').val().trim()}),
-            contentType : "application/json;charset=UTF-8",
-
-            success: function(data) {
-                if (data == "success") {
-                    window.location.href = '/index.html';
-                } else {
-                    alert('请检查卡号并重新输入');
-                }
-
-            }
-        });
-
-        return false;
-    }
-</script>
+                    success: function(data) {
+                        $('#part1').hide();
+                        var data2 = eval("("+data+")");
+                        $.each(data2, function(i, n){
+                            $("select").append("<option value='"+n+"'>"+n+"</option>");
+                        });
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 </html>

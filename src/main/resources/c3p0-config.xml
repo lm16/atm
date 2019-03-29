@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <c3p0-config>
     <default-config>
-        <property name="jdbcUrl">jdbc:mysql://localhost:3306/atm?useUnicode=true&amp;characterEncoding=UTF-8</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/atm_v2_2?useUnicode=true&amp;characterEncoding=UTF-8</property>
         <property name="driverClass">com.mysql.jdbc.Driver</property>
         <property name="user">root</property>
         <property name="password">change</property>
