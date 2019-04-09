@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100138
 File Encoding         : 65001
 
-Date: 2019-03-29 10:11:27
+Date: 2019-04-08 13:37:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,19 +20,19 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
-  `phone` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户手机号',
+  `phone` bigint(20) NOT NULL COMMENT '手机号',
   `passwd` varchar(255) NOT NULL COMMENT '登陆密码',
+  `name` varchar(255) DEFAULT NULL COMMENT '姓名',
+  `identity` varchar(255) DEFAULT NULL COMMENT '身份证号',
+  `frozen` tinyint(4) NOT NULL DEFAULT '0' COMMENT '冻结计数',
   PRIMARY KEY (`phone`)
-) ENGINE=InnoDB AUTO_INCREMENT=13556509411 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of account
 -- ----------------------------
-INSERT INTO `account` VALUES ('13556509406', 'zhuce');
-INSERT INTO `account` VALUES ('13556509407', 'cheshi');
-INSERT INTO `account` VALUES ('13556509408', 'cheshi2');
-INSERT INTO `account` VALUES ('13556509409', 'cheshi3');
-INSERT INTO `account` VALUES ('13556509410', 'test4');
+INSERT INTO `account` VALUES ('13730769211', 'bMeoK5U6', '吴颜祖', '982935199776836303', '0');
+INSERT INTO `account` VALUES ('15480158803', 'CUcl__jC/', '刘得华', '628712485428259357', '0');
 
 -- ----------------------------
 -- Table structure for bill
@@ -40,42 +40,47 @@ INSERT INTO `account` VALUES ('13556509410', 'test4');
 DROP TABLE IF EXISTS `bill`;
 CREATE TABLE `bill` (
   `billId` int(11) NOT NULL AUTO_INCREMENT COMMENT '交易单号',
-  `time` datetime DEFAULT NULL COMMENT '交易时间',
+  `selfId` int(11) DEFAULT NULL,
+  `cardId` varchar(255) NOT NULL COMMENT '用户账号',
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '交易时间',
   `type` tinyint(4) NOT NULL COMMENT '交易类型  0：存款 1：取款  2：转账',
-  `cardId` bigint(20) NOT NULL COMMENT '用户账号',
-  `change` decimal(10,2) NOT NULL COMMENT '交易金额',
+  `changee` decimal(10,2) NOT NULL COMMENT '交易金额',
   `balanceChange` decimal(10,2) NOT NULL COMMENT '账户余额',
-  `transferCardId` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`billId`) USING BTREE,
   KEY `u_account` (`cardId`) USING BTREE,
-  CONSTRAINT `fk_card` FOREIGN KEY (`cardId`) REFERENCES `card` (`cardId`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  KEY `fk_self` (`selfId`),
+  CONSTRAINT `fk_card` FOREIGN KEY (`cardId`) REFERENCES `card` (`cardId`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_self` FOREIGN KEY (`selfId`) REFERENCES `bill` (`billId`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of bill
 -- ----------------------------
+INSERT INTO `bill` VALUES ('30', null, '1126576788867670', '2019-04-08 13:32:17', '0', '100.00', '100.60');
+INSERT INTO `bill` VALUES ('31', null, '1126576788867670', '2019-04-08 13:32:34', '1', '50.30', '50.30');
+INSERT INTO `bill` VALUES ('32', null, '1126576788867670', '2019-04-08 13:34:20', '10', '30.00', '20.30');
+INSERT INTO `bill` VALUES ('33', '32', '4301374871239444', '2019-04-08 13:34:20', '11', '30.00', '31.00');
 
 -- ----------------------------
 -- Table structure for card
 -- ----------------------------
 DROP TABLE IF EXISTS `card`;
 CREATE TABLE `card` (
-  `cardId` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '银行卡号',
-  `pin` int(9) NOT NULL COMMENT '支付密码',
-  `balance` decimal(8,2) NOT NULL COMMENT '账户余额',
-  `belong` bigint(20) NOT NULL,
-  `isFrozen` tinyint(4) DEFAULT NULL COMMENT '是否被冻结 0：否 1：是',
-  `isLoss` tinyint(4) DEFAULT NULL COMMENT '是否挂失  0：否 1：是',
+  `cardId` varchar(255) NOT NULL COMMENT '银行卡号',
+  `balance` decimal(8,2) DEFAULT NULL COMMENT '账户余额',
+  `pin` int(11) DEFAULT NULL,
+  `belong` bigint(20) DEFAULT NULL,
+  `loss` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`cardId`) USING BTREE,
   KEY `BankCard` (`cardId`) USING BTREE,
   KEY `BankCard_2` (`cardId`) USING BTREE,
   KEY `bankCard_3` (`cardId`) USING BTREE,
   KEY `fk_account` (`belong`) USING BTREE,
   CONSTRAINT `fk_account` FOREIGN KEY (`belong`) REFERENCES `account` (`phone`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1112 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of card
 -- ----------------------------
-INSERT INTO `card` VALUES ('1024', '1024', '600.00', '13556509406', null, null);
-INSERT INTO `card` VALUES ('1111', '1111', '800.00', '13556509406', null, null);
+INSERT INTO `card` VALUES ('1126576788867670', '20.30', '725098', '13730769211', '0');
+INSERT INTO `card` VALUES ('4301374871239444', '31.00', '633679', '15480158803', '0');

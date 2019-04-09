@@ -11,174 +11,223 @@
     <title>$Title$</title>
 
     <style>
-      ul li{
+      body{
+          font-size: 18px;
+          line-height: 1.7;
+          margin: 0 20%;
+      }
+      .top-nav{
+          background: #eee;
+          margin-top: 50px;
+      }
+      .top-nav a{
+          text-decoration: none;
+          color:#666;
+          padding:6px 20px;
+      }
+      .wrapper{
+          height:1000px;
+          background: #f5f5f5;
+      }
+      .wrapper div{
+
+          overflow: hidden;
+      }
+      .wrapper ul, li{
         list-style:none;
-        float: left;
-        margin: 15px 20px;
+        float:left;
+      }
+      .wrapper li{
+        display: block;
+        margin: 0 20px;
         width: 230px;
       }
     </style>
   </head>
   <body>
-      <div class="wrapper">
-        <ul>
-          <li>
-            <div>
-              <p>欢迎您：${sessionScope.account.phone}</p>
-              <p>您当前使用的卡号为：${sessionScope.card.cardId}</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>余额</p>
-              <button id="toggle">显示余额</button>
-              <div id="show" style="font-size: 16px; color: red;">
-              </div>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>存款</p>
-              请输入金额：<input type="text" id="add">
-              <button id="b_add">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>取款</p>
-              请输入金额：<input type="text" id="subtract">
-              <button id="b_subtract">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>转账</p>
-              请输入金额：<input type="text" id="transfer"><br>
-              请输入对方卡号：<input type="text" id="target">
-              <button id="b_transfer">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>修改支付密码</p>
-              请输入原密码：<input type="text" id="passwd1"><br>
-              请输入新密码：<input type="text" id="passwd2">
-              <button id="b_passwd">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>申请解冻</p>
-              请输入姓名：<input type="text" id="frozen1"><br>
-              请输入身份证号：<input type="text" id="frozen2">
-              <button id="b_frozen">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <p>申请挂失</p>
-              请输入姓名：<input type="text" id="loss1"><br>
-              请输入身份证号：<input type="text" id="loss2">
-              <button id="b_loss">确定</button>
-            </div>
-          </li>
-          <li>
-            <div>
-              <div>
-                <p>注销此卡</p>
-                请输入姓名：<input type="text" id="drop1"><br>
-                请输入身份证号：<input type="text" id="drop2">
-                <button id="b_drop">确定</button>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+    <div class="top-nav">
+        <div>
+            <span>欢迎您：<em id="phone"></em></span>
+            <a href="">切换卡号</a>
+            <a href="/logout.do">退出登录</a>
+        </div>
+        <div></div>
+        <div style="margin-top: 10px">
+            <span>您当前使用的卡号为：<em id="card"></em></span>
+        </div>
+    </div>
+    <div class="wrapper">
+        <div>
+            <ul>
+                <li>
+                    <p>余额</p>
+                    <button id="toggle">显示余额</button><br>
+                    <span id="show" style="font-size: 16px; color: red; display: block; margin:10px"></span>
+                </li>
+            </ul>
+        </div>
+        <hr>
+        <div>
+          <ul>
+              <li>
+                  <p>存款</p>
+                  请输入金额：<input type="text" id="add">
+                  <button id="b_add">确定</button>
+              </li>
+              <li>
+                  <p>取款</p>
+                  请输入金额：<input type="text" id="subtract">
+                  <button id="b_subtract">确定</button>
+              </li>
+              <li>
+                  <p>转账</p>
+                  请输入金额：<input type="text" id="to"><br>
+                  请输入对方卡号：<input type="text" id="target">
+                  <button id="b_to">确定</button>
+              </li>
+            </ul>
+        </div>
+        <hr>
+        <div>
+            <ul>
+                <li>
+                    <p>交易记录</p>
+                    <a href="/bill.do">
+                        <button>跳转</button>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-      <script src="js/jquery.min.js"></script>
-      <script>
-          $(function(){
-              //余额已获取
-              $('#show').toggle();
-              show();
+    <script src="../../js/jquery.min.js"></script>
+    <script>
+      $(function(){
 
-              /*查询操作*/
-              $('#toggle').on('click',function () {
+          var phone = "${sessionScope.account.phone}".replace(/(\d{3})\d{5}(\d{3})/, "$1*****$2");
+          var card = "${sessionScope.card.cardId}".replace(/(\d{5})\d+(\d{5})/, "$1*********$2");
 
-                  $('#show').toggle();
-                  if($('#toggle').text()==="显示余额") {
-                      $('#toggle').text('隐藏余额');
-                  }else{
-                      $('#toggle').text('显示余额');
-                  }
-              });
+          $('#phone').html(phone);
+          $('#card').html(card);
+          //余额已获取
+          $('#show').css("visibility", "hidden");
+          show();
 
-              /*存款操作*/
-              $('#b_add').on('click',function () {
-                  $.ajax({
-                      url: "/update.do",
-                      type: "POST",
+          /*查询操作*/
+          $('#toggle').on('click',function () {
 
-                      contentType : "application/json;charset=UTF-8",
-                      data: JSON.stringify({"a":{"cardId":${sessionScope.card.cardId}}, "to":{ "type":0, "change":$('#add').val().trim()},"b":{}}),
-
-                      success: function(data) {
-                          $('#add').val("");
-                          alert(data+'存款成功');
-                          show();
-                      }
-                  })
-              });
-
-              /*取款操作*/
-              $('#b_subtract').on('click', function () {
-                  $.ajax({
-                      url: "/update.do",
-                      type: "POST",
-
-                      contentType : "application/json;charset=UTF-8",
-                      data: JSON.stringify({"a": {"cardId": ${sessionScope.card.cardId}}, "to":{ "type":1, "change":$('#subtract').val().trim()},"b":{}}),
-
-                      success: function(data) {
-                          $('#subtract').val("");
-                          alert(data+'取款成功');
-                          show();
-                      }
-                  })
-              });
-
-              /*转帐操作*/
-              $('#b_transfer').on('click', function () {
-                  $.ajax({
-                      url: "/update.do",
-                      type: "POST",
-
-                      data: JSON.stringify({"a":{"cardId":${sessionScope.card.cardId}}, "to":{ "type":2, "change":$('#transfer').val().trim()},"b":{"cardId":$('#target').val().trim()}}),
-                      contentType : "application/json;charset=UTF-8",
-
-                      success: function(data) {
-                          $('#transfer').val("");
-                          $('#target').val("");
-                          alert(data+'转帐成功');
-                          show();
-                      }
-                  })
-              })
+              if($('#show').css("visibility")==="hidden"){
+                  $('#show').css("visibility", "visible");
+              }else{
+                  $('#show').css("visibility", "hidden");
+              }
+              if($('#toggle').text()==="显示余额") {
+                  $('#toggle').text('隐藏余额');
+              }else{
+                  $('#toggle').text('显示余额');
+              }
           });
 
-          function show(){
+          /*存款操作*/
+          $('#b_add').on('click',function () {
+
+              if(!/(?!^0*(\.0{1,2})?$)^\d{1,6}(\.\d{1,2})?$/.test($('#add').val())){
+                  alert('检查下输入值？');
+                  return
+              }
+
               $.ajax({
-                  url: "/show.do",
+                  url: "/update.do",
                   type: "POST",
 
                   contentType : "application/json;charset=UTF-8",
-                  data: JSON.stringify({"cardId":${sessionScope.card.cardId}}),
+                  data: JSON.stringify({"cardId":'${sessionScope.card.cardId}', "type":0, "changee":$('#add').val().trim()}),
 
                   success: function(data) {
-                      $('#show').html(data);
+                      $('#add').val("");
+
+                      if(/^\d+.\d+$/.test(data)) {
+                          alert('存款成功');
+                          $('#show').html(data);
+                      }else{
+                          alert(data);
+                      }
                   }
-              });
-          }
-      </script>
+              })
+          });
+
+          /*取款操作*/
+          $('#b_subtract').on('click', function () {
+
+              if(!/([1-9]\d{0,5}|0)(\.[1-9]{1,2}|\.0[1-9])?/.test($('#subtract').val())){
+                  alert('检查下输入值？');
+                  return
+              }
+
+              $.ajax({
+                  url: "/update.do",
+                  type: "POST",
+
+                  contentType : "application/json;charset=UTF-8",
+                  data: JSON.stringify({"cardId": '${sessionScope.card.cardId}', "type":1, "changee":$('#subtract').val().trim()}),
+
+                  success: function(data) {
+                      $('#subtract').val("");
+
+                      if(/^\d+.\d+$/.test(data)) {
+                          alert('取款成功');
+                          $('#show').html(data);
+                      }else{
+                          alert(data);
+                      }
+                  }
+              })
+          });
+
+          /*转帐操作*/
+          $('#b_to').on('click', function () {
+
+              if(!/([1-9]\d{0,5}|0)(\.[1-9]{1,2}|\.0[1-9])?/.test($('#to').val())){
+                  alert('检查下输入值？');
+              }else if(!/[1-6]{1}(\d{15}|\d{18})/.test($('#target').val())){
+                  alert('检查下卡号？');
+              }else{
+                  $.ajax({
+                      url: "/turn.do",
+                      type: "POST",
+
+                      contentType : "application/json;charset=UTF-8",
+                      data: JSON.stringify({"a":{"cardId": '${sessionScope.card.cardId}', "type":10, "changee":$('#to').val().trim()}, "b":{"cardId": $('#target').val().trim(),  "type":11, "changee":$('#to').val().trim()}}),
+
+                      success: function(data) {
+                          $('#to').val("");
+                          $('#target').val("");
+                          if(/^\d+.\d+$/.test(data)) {
+                              alert('转帐成功');
+                              $('#show').html(data);
+                          }else{
+                              alert(data);
+                          }
+                      }
+                  })
+              }
+          });
+
+      });
+
+      function show(){
+          $.ajax({
+              url: "/show.do",
+              type: "POST",
+
+              contentType : "application/json;charset=UTF-8",
+              data: JSON.stringify({"cardId":'${sessionScope.card.cardId}'}),
+
+              success: function(data) {
+                  $('#show').html(data);
+              }
+          });
+      }
+    </script>
   </body>
 </html>

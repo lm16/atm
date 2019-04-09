@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .wrapper{
+            margin: 50px 400px;
+        }
+        tr{
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <fieldset>
+            <legend>账户生成</legend>
+            <table>
+                <tr>
+                    <td>手机号: </td>
+                    <td><input type="text" id="phone"/></td>
+                    <td>
+                        <button id="b_phone">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>登录密码: </td>
+                    <td><input type="text" id="passwd"/></td>
+                    <td>
+                        <button id="b_passwd">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>姓名：</td>
+                    <td><input type="text" id="name"/></td>
+                </tr>
+                <tr>
+                    <td>身份证号：</td>
+                    <td><input type="text" id="identity"/></td>
+                    <td>
+                        <button id="b_identity">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><button id="account">提交</button></td>
+                </tr>
+            </table>
+        </fieldset>
+
+        <fieldset style="margin-top:100px" id="show">
+            <legend>绑定银行卡</legend>
+            <table>
+                <tr>
+                    <td>银行卡号：</td>
+                    <td><input type="text" id="cardId"/></td>
+                    <td>
+                        <button id="b_cardId">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>余额：</td>
+                    <td> <input type="text" id="balance"/></td>
+                    <td>
+                        <button id="b_balance">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>支付密码：</td>
+                    <td><input type="text" id="pin"/></td>
+                    <td>
+                        <button id="b_pin">生成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><button id="card">提交</button></td>
+                </tr>
+            </table>
+        </fieldset>
+        <div style="margin-top:20px">
+            <a href="" id="html">继续添加卡号点这里</a>
+        </div>
+        <div style="margin-top:20px">
+            <a href="/index.do">返回登录</a>
+        </div>
+    </div>
+
+
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/rand.bundle.js"></script>
+    <script>
+        $(function () {
+
+            $('#b_phone').on('click', function(){
+                $('#phone').val(phone);
+            });
+
+            $('#b_passwd').on('click', function(){
+                $('#passwd').val(passwd);
+            });
+            $('#b_identity').on('click', function(){
+                $('#identity').val(identity);
+            });
+
+            $('#b_cardId').on('click', function(){
+                $('#cardId').val(cardId);
+            });
+            $('#b_balance').on('click', function(){
+                $('#balance').val(balance);
+            });
+
+            $('#b_pin').on('click', function(){
+                $('#pin').val(pin);
+            });
+
+            $('#show').css("visibility", "hidden");
+
+            $('#account').on('click', function () {
+
+                if(!/(13|14|15|18)[0-9]{9}/.test($('#phone').val().trim())){
+                    alert('手机号检查下？')
+                }else if(!/[\w+*/.]{8,12}/.test($('#passwd').val().trim())){
+                    alert('登录密码检查下？')
+                }else if(!/[\u4e00-\u9fa5]{2,3}/.test($('#name').val().trim())){
+                    alert('姓名检查下?')
+                } else if(!/\d{18}|\d{15}/.test($('#identity').val().trim())){
+                    alert('身份证号检查下？')
+                } else{
+                    $.ajax({
+                        url: "/admin/account.do",
+                        type: "POST",
+
+                        contentType: "application/json;charset=UTF-8",
+                        data: JSON.stringify({"phone":$('#phone').val().trim(), "passwd":$('#passwd').val().trim(), "name":$('#name').val().trim(), "identity":$('#identity').val().trim()}),
+
+                        success: function (data) {
+                            alert('生成账户' + data);
+                            if(data==='success') {
+                                $('#show').css("visibility", "visible");
+                            }
+                        }
+                    })
+                }
+            });
+
+            $('#card').on('click', function () {
+                var cardIdReg = /[1-6]{1}(\d{15}|\d{18})/;
+                var balanceReg = /([1-9]\d{0,5}|0)(\.[1-9]{1,2}|\.0[1-9])?/;
+                var pinReg = /\d{6}/;
+
+                var cardId = $('#cardId').val().trim();
+                var balance = $('#balance').val().trim();
+                var pin = $('#pin').val().trim();
+
+                if(!cardIdReg.test(cardId)){
+                    alert('卡号检查下？')
+                }else if(!balanceReg.test(balance)){
+                    alert('余额检查下？')
+                }else if(!pinReg.test(pin)){
+                    alert('支付密码检查下？')
+                }else {
+                    $.ajax({
+                        url: "/admin/card.do",
+                        type: "POST",
+
+                        contentType: "application/json;charset=UTF-8",
+                        data: JSON.stringify({
+                            "cardId": $('#cardId').val().trim(),
+                            "balance": $('#balance').val().trim(),
+                            "pin": $('#pin').val().trim(),
+                            "belong": $('#phone').val().trim()
+                        }),
+
+                        success: function (data) {
+                            alert("绑定银行卡" + data);
+                        }
+                    })
+                }
+            });
+
+            $('#html').on('click', function(){
+              $.ajax({
+                  url: "/admin/multi.do",
+                  type: "POST",
+
+                  contentType: "application/json;charset=UTF-8",
+                  data: JSON.stringify({"phone": $('#phone').val().trim()}),
+
+                  dataType:'html',
+                  success: function(data){
+                      document.write(data);
+                  }
+
+              })
+            })
+        })
+    </script>
+</body>
+</html>

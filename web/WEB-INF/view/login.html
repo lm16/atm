@@ -37,10 +37,18 @@
         </ul>
     </div>
 
-    <script src="js/jquery.min.js"></script>
+    <script src="../../js/jquery.min.js"></script>
     <script>
         $(function(){
+            $('#part2').hide();
+            $('#forget').hide();
+
             $('#b_account').on('click', function(){
+                if(!/^\d{11}$/.test($('#phone').val())){
+                    alert("帐号格式不正确");
+                    return;
+                }
+
                 $.ajax({
                     url: "/login.do",
                     type: "POST",
@@ -49,11 +57,24 @@
                     data: JSON.stringify({"phone":$('#phone').val().trim(), "passwd":$('#passwd').val().trim()}),
 
                     success: function(data) {
-                        $('#part1').hide();
-                        var data2 = eval("("+data+")");
-                        $.each(data2, function(i, n){
-                            $("select").append("<option value='"+n+"'>"+n+"</option>");
-                        });
+                        if(data==='1'){
+                            alert('该账户不存在');
+                        }else if(data==='2'){
+                            alert('密码错误');
+                        }else if(data==='3') {
+                            alert('密码错误连续超过3次，该账户已被锁定');
+                        } else{
+                            $('#part1').fadeOut(2000);
+                            $('#part2').fadeIn(2000);
+
+                            var array =  JSON.parse(data);
+                            var len = array.length;
+
+                            for(var i=0; i<len; i++){
+                                $("select").append("<option value='" + array[i].toString() + "'>" +array[i].toString()+"</option>");
+                            }
+
+                        }
                     }
                 })
             })

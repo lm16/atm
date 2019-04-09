@@ -1,18 +1,19 @@
-package entity;
+package com.entity;
 
 import java.math.BigDecimal;
 
 public class Card {
-    private long cardId;
+    private String cardId;
     private int pin;
     private BigDecimal balance;
     private long belong;
+    private byte loss;
 
-    public long getCardId() {
+    public String getCardId() {
         return cardId;
     }
 
-    public void setCardId(long cardId) {
+    public void setCardId(String cardId) {
         this.cardId = cardId;
     }
 
@@ -38,5 +39,13 @@ public class Card {
 
     public void setBelong(long belong) {
         this.belong = belong;
+    }
+
+    public byte getLoss() {
+        return loss;
+    }
+
+    public void setLoss(byte loss) {
+        this.loss = loss;
     }
 }
