@@ -12,15 +12,11 @@ import java.util.List;
 @Service
 public class FatherServiceImpl implements FatherService {
 
-    FatherMapper fatherMapper;
-
     @Autowired
-    public FatherServiceImpl(FatherMapper fatherMapper){
-        this.fatherMapper = fatherMapper;
-    }
+    private FatherMapper fatherMapper;
 
     @Override
     public List<Father> list() {
-        return null;
+        return fatherMapper.list();
     }
 }

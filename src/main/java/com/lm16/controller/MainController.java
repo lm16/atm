@@ -20,10 +20,12 @@ public class MainController {
         this.fatherService = fatherService;
     }
 
-    @RequestMapping("list")
+    @RequestMapping("/list.do")
     public ModelAndView list(){
-        ModelAndView modelAndView = new ModelAndView();
+
         List<Father> list = fatherService.list();
+
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", list);
         modelAndView.setViewName("list");
         return modelAndView;
